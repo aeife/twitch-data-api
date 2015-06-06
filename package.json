@@ -1,0 +1,24 @@
+{
+  "name": "twitch-data-api",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aeife/twitch-data-api.git"
+  },
+  "author": "André Eife <andre.eife@gmail.com>",
+  "license": " ",
+  "bugs": {
+    "url": "https://github.com/aeife/twitch-data-api/issues"
+  },
+  "homepage": "https://github.com/aeife/twitch-data-api",
+  "dependencies": {
+    "body-parser": "^1.12.4",
+    "express": "^4.12.4",
+    "mongoose": "^4.0.5"
+  }
+}
