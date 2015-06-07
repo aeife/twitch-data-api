@@ -71,4 +71,19 @@ router.route('/games')
     });
   });
 
+router.route('/games/:gameId')
+  .get(function(req, res) {
+    if (!req.params.gameId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.sendStatus(404);
+    }
+
+    Game.findById(req.params.gameId, function (err, game) {
+      if (!game) {
+        return res.sendStatus(404);
+      }
+
+      res.json(game);
+    });
+  });
+
 module.exports = router;
