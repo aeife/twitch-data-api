@@ -22,13 +22,6 @@ var queryGames = function (options) {
     };
   }
 
-  var sort = {};
-  if (options.order == 'asc') {
-    sort[options.sortAttr] = 1;
-  } else {
-    sort[options.sortAttr] = -1;
-  }
-
   var search = {};
   if (options.search) {
     search.name = {$regex: options.search, $options: 'i'};
@@ -38,8 +31,7 @@ var queryGames = function (options) {
   .aggregate()
   .match(search)
   .unwind("stats")
-  .group(group)
-  .sort(sort);
+  .group(group);
 };
 
 router.route('/games')
@@ -52,7 +44,8 @@ router.route('/games')
       order: 'desc',
       sortAttr: 'viewers',
       sortType: 'last',
-      search: null
+      search: null,
+      ratio: false
     });
 
     queryGames(options)
@@ -60,6 +53,18 @@ router.route('/games')
       if (err) {
         res.send(err);
       }
+
+      games.sort(function (d1, d2) {
+        if (options.order === 'desc' && options.ratio) {
+          return ((d2.channels > 0) ? d2.viewers / d2.channels : 0) - ((d1.channels > 0) ? d1.viewers / d1.channels : 0);
+        } else if (options.ratio) {
+          return ((d1.channels > 0) ? d1.viewers / d1.channels : 0) - ((d2.channels > 0) ? d2.viewers / d2.channels : 0);
+        } else if (options.order === 'desc') {
+          return d2[options.sortAttr] - d1[options.sortAttr];
+        } else {
+          return d1[options.sortAttr] - d2[options.sortAttr];
+        }
+      });
 
       res.json({
         games: _.slice(games, options.offset || 0).slice(0, options.limit),
