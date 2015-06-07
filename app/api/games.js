@@ -44,8 +44,7 @@ router.route('/games')
       order: 'desc',
       sortAttr: 'viewers',
       sortType: 'last',
-      search: null,
-      ratio: false
+      search: null
     });
 
     queryGames(options)
@@ -55,9 +54,9 @@ router.route('/games')
       }
 
       games.sort(function (d1, d2) {
-        if (options.order === 'desc' && options.ratio) {
+        if (options.order === 'desc' && options.sortAttr === 'ratio') {
           return ((d2.channels > 0) ? d2.viewers / d2.channels : 0) - ((d1.channels > 0) ? d1.viewers / d1.channels : 0);
-        } else if (options.ratio) {
+        } else if (options.sortAttr === 'ratio') {
           return ((d1.channels > 0) ? d1.viewers / d1.channels : 0) - ((d2.channels > 0) ? d2.viewers / d2.channels : 0);
         } else if (options.order === 'desc') {
           if(d1[options.sortAttr] < d2[options.sortAttr]) return 1;
