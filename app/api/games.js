@@ -3,17 +3,17 @@ var Game = require('../models/game').model;
 var router = express.Router();
 var _ = require('lodash');
 
-var queryGames = function (attr, sortType, fullData, order) {
+var queryGames = function (options) {
   var group = {
     _id: "$_id",
     name: { $first: "$name" },
     viewers: {},
     channels: {}
   };
-  group.viewers['$' + sortType] = "$stats.viewers";
-  group.channels['$' + sortType] = "$stats.channels";
+  group.viewers['$' + options.sortType] = "$stats.viewers";
+  group.channels['$' + options.sortType] = "$stats.channels";
 
-  if (fullData) {
+  if (options.fullData) {
     group.stats = {
       $push: {
         viewers: "$stats.viewers",
@@ -23,14 +23,20 @@ var queryGames = function (attr, sortType, fullData, order) {
   }
 
   var sort = {};
-  if (order == 'asc') {
-    sort[attr] = 1;
+  if (options.order == 'asc') {
+    sort[options.sortAttr] = 1;
   } else {
-    sort[attr] = -1;
+    sort[options.sortAttr] = -1;
+  }
+
+  var search = {};
+  if (options.search) {
+    search.name = {$regex: options.search, $options: 'i'};
   }
 
   return Game
   .aggregate()
+  .match(search)
   .unwind("stats")
   .group(group)
   .sort(sort);
@@ -45,10 +51,11 @@ router.route('/games')
       fullData: false,
       order: 'desc',
       sortAttr: 'viewers',
-      sortType: 'last'
+      sortType: 'last',
+      search: null
     });
 
-    queryGames(options.sortAttr, options.sortType, options.fullData, options.order)
+    queryGames(options)
     .limit(parseInt(options.limit))
     .skip(parseInt(options.offset || 0))
     .exec(function(err, games) {
