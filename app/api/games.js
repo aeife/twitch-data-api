@@ -56,24 +56,16 @@ router.route('/games')
     });
 
     queryGames(options)
-    .limit(parseInt(options.limit))
-    .skip(parseInt(options.offset || 0))
     .exec(function(err, games) {
       if (err) {
         res.send(err);
       }
 
-      Game.count(function (err, count) {
-        if (err) {
-          res.send(err);
-        }
-
-        res.json({
-          games: games,
-          limit: req.query.limit,
-          offset: req.query.offset,
-          count: count
-        });
+      res.json({
+        games: _.slice(games, options.offset || 0).slice(0, options.limit),
+        limit: req.query.limit,
+        offset: req.query.offset,
+        count: games.length
       });
     });
   });
