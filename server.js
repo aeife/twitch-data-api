@@ -21,8 +21,10 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/twitch');
 
 var gameApi = require('./app/api/games.js');
+var statsApi = require('./app/api/stats.js');
 app.use('/api/v1', router);
 app.use('/api/v1', gameApi);
+app.use('/api/v1', statsApi);
 
 var port = process.env.PORT || 8080;
 app.listen(port);
