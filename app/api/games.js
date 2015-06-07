@@ -1,6 +1,7 @@
 var express = require('express');
 var Game = require('../models/game').model;
 var router = express.Router();
+var _ = require('lodash');
 
 var queryGames = function (attr, sortType, fullData, order) {
     var group = {
@@ -38,9 +39,19 @@ var queryGames = function (attr, sortType, fullData, order) {
 router.route('/games')
     // get game list
     .get(function(req, res) {
-        queryGames(req.query.sortAttr, req.query.sortType, req.query.fullData, req.query.order)
-          .limit(parseInt(req.query.limit))
-          .skip(parseInt(req.query.offset || 0))
+      var options = req.query;
+        _.defaults(options, {
+          limit: 50,
+          offset: 0,
+          fullData: false,
+          order: 'desc',
+          sortAttr: 'viewers',
+          sortType: 'last'
+        });
+
+        queryGames(options.sortAttr, options.sortType, options.fullData, options.order)
+          .limit(parseInt(options.limit))
+          .skip(parseInt(options.offset || 0))
           .exec(function(err, games) {
               if (err) {
                   res.send(err);
