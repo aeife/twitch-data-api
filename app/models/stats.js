@@ -21,6 +21,6 @@ StatsSchema.pre('save', function(next){
 });
 
 module.exports = {
-  model: mongoose.model('Stats', StatsSchema),
+  model: mongoose.model('Stats', StatsSchema, 'totalStats'),
   schema: StatsSchema
 };
