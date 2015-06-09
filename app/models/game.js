@@ -6,8 +6,19 @@ var StatsSchema = require('./stats').schema;
 var GameSchema = new Schema({
     name: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        index: true
+    },
+    dateCreated: {
+      type: Date
+    },
+    dateModified: {
+      type: Date
+    },
+    twitchGameId: {
+      type: Number,
+      required: true,
+      unique: true
     },
     stats: [StatsSchema]
 });
