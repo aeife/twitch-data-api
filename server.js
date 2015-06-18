@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
 });
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/twitch');
+mongoose.connect('mongodb://localhost:27017/twitchdata');
 
 var gameApi = require('./app/api/games.js');
 var statsApi = require('./app/api/stats.js');
