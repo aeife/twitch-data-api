@@ -18,7 +18,8 @@ var GameSchema = new Schema({
     twitchGameId: {
       type: Number,
       required: true,
-      unique: true
+      unique: true,
+      index: true
     },
     stats: [StatsSchema]
 });

@@ -8,16 +8,10 @@ var StatsSchema = new Schema({
   channels: {
       type: Number
   },
-  created_at: {
-    type: Date
+  collectionRun: {
+      type: Number,
+      ref: 'CollectionRun'
   }
-});
-
-StatsSchema.pre('save', function(next){
-  if ( !this.created_at ) {
-    this.created_at = new Date();
-  }
-  next();
 });
 
 module.exports = {
