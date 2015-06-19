@@ -8,6 +8,7 @@ router.route('/stats')
   .get(function(req, res) {
     Stats
       .find()
+      .populate('collectionRun')
       .exec(function (err, stats) {
         res.json({
           stats: stats
