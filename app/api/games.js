@@ -1,5 +1,6 @@
 var express = require('express');
 var Game = require('../models/game').model;
+var CollectionRun = require('../models/collectionRun').model;
 var router = express.Router();
 var _ = require('lodash');
 
@@ -17,7 +18,8 @@ var queryGames = function (options) {
     group.stats = {
       $push: {
         viewers: "$stats.viewers",
-        channels: "$stats.channels"
+        channels: "$stats.channels",
+        collectionRun: "$stats.collectionRun"
       }
     };
   }
@@ -53,27 +55,33 @@ router.route('/games')
         res.send(err);
       }
 
-      games.sort(function (d1, d2) {
-        if (options.order === 'desc' && options.sortAttr === 'ratio') {
-          return ((d2.channels > 0) ? d2.viewers / d2.channels : 0) - ((d1.channels > 0) ? d1.viewers / d1.channels : 0);
-        } else if (options.sortAttr === 'ratio') {
-          return ((d1.channels > 0) ? d1.viewers / d1.channels : 0) - ((d2.channels > 0) ? d2.viewers / d2.channels : 0);
-        } else if (options.order === 'desc') {
-          if(d1[options.sortAttr] < d2[options.sortAttr]) return 1;
-          if(d1[options.sortAttr] > d2[options.sortAttr]) return -1;
-          return 0;
-        } else {
-          if(d1[options.sortAttr] < d2[options.sortAttr]) return -1;
-          if(d1[options.sortAttr] > d2[options.sortAttr]) return 1;
-          return 0;
+      Game.populate(games, {path: 'stats.collectionRun'}, function (error, games) {
+        if (err) {
+          res.send(err);
         }
-      });
 
-      res.json({
-        games: _.slice(games, options.offset || 0).slice(0, options.limit),
-        limit: req.query.limit,
-        offset: req.query.offset,
-        count: games.length
+        games.sort(function (d1, d2) {
+          if (options.order === 'desc' && options.sortAttr === 'ratio') {
+            return ((d2.channels > 0) ? d2.viewers / d2.channels : 0) - ((d1.channels > 0) ? d1.viewers / d1.channels : 0);
+          } else if (options.sortAttr === 'ratio') {
+            return ((d1.channels > 0) ? d1.viewers / d1.channels : 0) - ((d2.channels > 0) ? d2.viewers / d2.channels : 0);
+          } else if (options.order === 'desc') {
+            if(d1[options.sortAttr] < d2[options.sortAttr]) return 1;
+            if(d1[options.sortAttr] > d2[options.sortAttr]) return -1;
+            return 0;
+          } else {
+            if(d1[options.sortAttr] < d2[options.sortAttr]) return -1;
+            if(d1[options.sortAttr] > d2[options.sortAttr]) return 1;
+            return 0;
+          }
+        });
+
+        res.json({
+          games: _.slice(games, options.offset || 0).slice(0, options.limit),
+          limit: req.query.limit,
+          offset: req.query.offset,
+          count: games.length
+        });
       });
     });
   });
@@ -84,7 +92,7 @@ router.route('/games/:gameId')
       return res.sendStatus(404);
     }
 
-    Game.findById(req.params.gameId, function (err, game) {
+    Game.findById(req.params.gameId).populate('stats.collectionRun').exec(function (err, game) {
       if (!game) {
         return res.sendStatus(404);
       }

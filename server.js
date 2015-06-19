@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var autoIncrement = require('mongoose-auto-increment');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -18,7 +19,8 @@ router.get('/', function(req, res) {
 });
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/twitchdata');
+var dbConnection = mongoose.connect('mongodb://localhost:27017/twitchdata');
+autoIncrement.initialize(dbConnection);
 
 var gameApi = require('./app/api/games.js');
 var statsApi = require('./app/api/stats.js');
