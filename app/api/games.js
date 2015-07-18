@@ -135,13 +135,13 @@ router.route('/games')
 
   });
 
-router.route('/games/:gameId')
+router.route('/games/:gameName')
   .get(function(req, res) {
-    if (!req.params.gameId.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!req.params.gameName || !req.params.gameName.length) {
       return res.sendStatus(404);
     }
 
-    Game.findById(req.params.gameId).populate('stats.collectionRun').exec(function (err, game) {
+    Game.findOne({name: req.params.gameName}).populate('stats.collectionRun').exec(function (err, game) {
       if (!game) {
         return res.sendStatus(404);
       }
