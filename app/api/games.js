@@ -1,8 +1,12 @@
 var express = require('express');
 var Game = require('../models/game').model;
+var mongoose = require('mongoose');
+var LastRun = mongoose.model('Game', require('../models/game').schema, 'lastRun');
 var CollectionRun = require('../models/collectionRun').model;
 var router = express.Router();
 var _ = require('lodash');
+var async = require('async');
+
 
 var aggregateGroup = function (options) {
   var group = {
@@ -90,47 +94,45 @@ router.route('/games')
       fullData: false,
       order: 'desc',
       sortAttr: 'viewers',
-      sortType: 'last',
       search: null
     });
 
-    queryGames(options, function (err, aggregatedResult) {
-      aggregatedResult
-        .exec(function(err, games) {
-          if (err) {
-            res.send(err);
-          }
+    var sort = {};
+    sort[options.sortAttr] = options.order === 'desc' ? -1 : 1;
 
-          Game.populate(games, {path: 'stats.collectionRun'}, function (error, games) {
-            if (err) {
-              res.send(err);
-            }
+    var search= {};
+    if (options.search) {
+      search.name = {$regex: options.search, $options: 'i'};
+    }
 
-            games.sort(function (d1, d2) {
-              if (options.order === 'desc' && options.sortAttr === 'ratio') {
-                return ((d2.channels > 0) ? d2.viewers / d2.channels : 0) - ((d1.channels > 0) ? d1.viewers / d1.channels : 0);
-              } else if (options.sortAttr === 'ratio') {
-                return ((d1.channels > 0) ? d1.viewers / d1.channels : 0) - ((d2.channels > 0) ? d2.viewers / d2.channels : 0);
-              } else if (options.order === 'desc') {
-                if(d1[options.sortAttr] < d2[options.sortAttr]) return 1;
-                if(d1[options.sortAttr] > d2[options.sortAttr]) return -1;
-                return 0;
-              } else {
-                if(d1[options.sortAttr] < d2[options.sortAttr]) return -1;
-                if(d1[options.sortAttr] > d2[options.sortAttr]) return 1;
-                return 0;
-              }
-            });
+    var requests = [];
 
-            res.json({
-              games: _.slice(games, options.offset || 0).slice(0, options.limit),
-              limit: req.query.limit,
-              offset: req.query.offset,
-              count: games.length
-            });
-          });
-        });
+    requests.push(function (cb) {
+      LastRun
+        .find(search)
+        .count()
+        .exec(cb);
     });
+
+    requests.push(function (cb) {
+      LastRun
+        .find(search)
+        .limit(options.limit)
+        .skip(options.offset)
+        .sort(sort)
+        .exec(cb);
+    });
+
+    async.parallel(requests, function (err, result) {
+      res.json({
+        games: result[1],
+        limit: options.limit,
+        offset: options.offset,
+        count: result[0]
+      });
+    });
+
+
   });
 
 router.route('/games/:gameId')
