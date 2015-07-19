@@ -141,12 +141,25 @@ router.route('/games/:gameName')
       return res.sendStatus(404);
     }
 
-    Game.findOne({name: req.params.gameName}).populate('stats.collectionRun').exec(function (err, game) {
-      if (!game) {
+    var requests = [];
+
+    requests.push(function (cb) {
+      CollectionRun.findOne({}).sort({_id: -1}).exec(cb);
+    });
+
+    requests.push(function (cb) {
+      Game.findOne({name: req.params.gameName}).populate('stats.collectionRun').exec(cb);
+    });
+
+    async.parallel(requests, function (err, result) {
+      if (!result[1]) {
         return res.sendStatus(404);
       }
 
-      res.json(game);
+      res.json({
+        game: result[1],
+        lastCollectionRun: result[0]
+      });
     });
   });
 
