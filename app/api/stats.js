@@ -7,8 +7,7 @@ var _ = require('lodash');
 router.route('/stats')
   .get(function(req, res) {
     Stats
-      .find()
-      .populate('collectionRun')
+      .find({}, {_id: 0, __v: 0})
       .exec(function (err, stats) {
         res.json({
           stats: stats

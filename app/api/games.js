@@ -141,6 +141,21 @@ router.route('/games/:gameName')
       return res.sendStatus(404);
     }
 
+    Game.findOne({name: req.params.gameName}, {stats: 0, __v: 0}).exec(function (err, result) {
+      if (!result) {
+        return res.sendStatus(404);
+      }
+
+      res.json(result);
+    });
+  });
+
+router.route('/games/:gameName/stats')
+  .get(function(req, res) {
+    if (!req.params.gameName || !req.params.gameName.length) {
+      return res.sendStatus(404);
+    }
+
     var requests = [];
 
     requests.push(function (cb) {
@@ -148,7 +163,7 @@ router.route('/games/:gameName')
     });
 
     requests.push(function (cb) {
-      Game.findOne({name: req.params.gameName}).populate('stats.collectionRun').exec(cb);
+      Game.findOne({name: req.params.gameName}, {_id: 0, dateCreated: 0, dateModified: 0, name: 0, twitchGameId: 0, giantbombId: 0, 'stats._id': 0}).exec(cb);
     });
 
     async.parallel(requests, function (err, result) {
@@ -157,8 +172,11 @@ router.route('/games/:gameName')
       }
 
       res.json({
-        game: result[1],
-        lastCollectionRun: result[0]
+        stats: result[1].stats,
+        lastCollectionRun: {
+          run: result[0]._id,
+          date: result[0].date
+        }
       });
     });
   });

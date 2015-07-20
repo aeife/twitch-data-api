@@ -9,8 +9,13 @@ var StatsSchema = new Schema({
       type: Number
   },
   collectionRun: {
-      type: Number,
-      ref: 'CollectionRun'
+      run: {
+        type: Number,
+        ref: 'CollectionRun'
+      },
+      date: {
+        type: Date
+      }
   }
 });
 
