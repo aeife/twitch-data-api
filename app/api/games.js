@@ -193,8 +193,7 @@ router.route('/games/:gameName/stats')
           },
           viewers: {$first: "$stats.viewers"},
           channels: {$first: "$stats.channels"},
-          date: {$first: "$stats.collectionRun.date"},
-          run: {$first: "$stats.collectionRun.run"}
+          date: {$first: "$stats.collectionRun.date"}
         }},
         {$project: {
           _id: 0,
@@ -205,7 +204,6 @@ router.route('/games/:gameName/stats')
           viewers: "$viewers",
           channels: "$channels",
           date: "$date",
-          run: "$run"
         }},
         {$sort: {
           year: 1,
