@@ -195,19 +195,19 @@ router.route('/games/:gameName/stats')
         }},
         {$project: {
           _id: 0,
-          year: "$_id.year",
-          month: "$_id.month",
-          day: "$_id.day",
-          hour: "$_id.hour",
-          viewers: "$viewers",
-          channels: "$channels",
-          date: "$date",
+          y: "$_id.year",
+          m: "$_id.month",
+          d: "$_id.day",
+          h: "$_id.hour",
+          v: "$viewers",
+          c: "$channels",
+          dt: "$date"
         }},
         {$sort: {
-          year: 1,
-          month: 1,
-          day: 1,
-          hour: 1
+          y: 1,
+          m: 1,
+          d: 1,
+          h: 1
         }}
       ]).exec(cb);
     });
