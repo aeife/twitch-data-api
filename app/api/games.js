@@ -164,12 +164,10 @@ router.route('/games/:gameName/stats')
 
     requests.push(function (cb) {
       var currentDate = new Date();
-      lastMonth = new Date(currentDate.getTime());
+      var lastMonth = new Date(currentDate.getTime());
       lastMonth = lastMonth.setMonth(lastMonth.getMonth() - 1);
-      console.log(lastMonth);
-      lastQuarter = new Date(currentDate.getTime());
+      var lastQuarter = new Date(currentDate.getTime());
       lastQuarter = lastQuarter.setMonth(lastQuarter.getMonth() -3);
-      console.log(lastQuarter);
       Game.aggregate([
         {$match: {name: req.params.gameName}},
         {$unwind: '$stats'},
