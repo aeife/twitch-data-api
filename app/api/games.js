@@ -163,7 +163,50 @@ router.route('/games/:gameName/stats')
     });
 
     requests.push(function (cb) {
-      Game.findOne({name: req.params.gameName}, {_id: 0, dateCreated: 0, dateModified: 0, name: 0, twitchGameId: 0, giantbombId: 0, 'stats._id': 0}).exec(cb);
+      Game.aggregate([
+        {$match: {name: 'League of Legends'}},
+        {$unwind: '$stats'},
+        {$group: {
+          _id: {
+            $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date('12/01/2015') ] }, then: {
+              year: {$year: "$stats.collectionRun.date"},
+              month: {$month: "$stats.collectionRun.date"},
+              day: {$dayOfYear: "$stats.collectionRun.date"},
+              hour: {$hour: "$stats.collectionRun.date"}
+            }, else: {
+              $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date('11/01/2015') ] }, then: {
+                year: {$year: "$stats.collectionRun.date"},
+                month: {$month: "$stats.collectionRun.date"},
+                day: {$dayOfYear: "$stats.collectionRun.date"}
+              }, else: {
+                  year: {$year: "$stats.collectionRun.date"},
+                  month: {$month: "$stats.collectionRun.date"}
+              }}
+            }}
+          },
+          viewers: {$first: "$stats.viewers"},
+          channels: {$first: "$stats.viewers"},
+          date: {$first: "$stats.collectionRun.date"},
+          run: {$first: "$stats.collectionRun.run"}
+        }},
+        {$project: {
+          _id: 0,
+          year: "$_id.year",
+          month: "$_id.month",
+          day: "$_id.day",
+          hour: "$_id.hour",
+          viewers: "$viewers",
+          channels: "$channels",
+          date: "$date",
+          run: "$run"
+        }},
+        {$sort: {
+          year: 1,
+          month: 1,
+          day: 1,
+          hour: 1
+        }}
+      ]).exec(cb);
     });
 
     async.parallel(requests, function (err, result) {
@@ -172,7 +215,7 @@ router.route('/games/:gameName/stats')
       }
 
       res.json({
-        stats: result[1].stats,
+        stats: result[1],
         lastCollectionRun: {
           run: result[0]._id,
           date: result[0].date
