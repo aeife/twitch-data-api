@@ -163,18 +163,25 @@ router.route('/games/:gameName/stats')
     });
 
     requests.push(function (cb) {
+      var currentDate = new Date();
+      lastMonth = new Date(currentDate.getTime());
+      lastMonth = lastMonth.setMonth(lastMonth.getMonth() - 1);
+      console.log(lastMonth);
+      lastQuarter = new Date(currentDate.getTime());
+      lastQuarter = lastQuarter.setMonth(lastQuarter.getMonth() -3);
+      console.log(lastQuarter);
       Game.aggregate([
-        {$match: {name: 'League of Legends'}},
+        {$match: {name: req.params.gameName}},
         {$unwind: '$stats'},
         {$group: {
           _id: {
-            $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date('12/01/2015') ] }, then: {
+            $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date(lastMonth) ] }, then: {
               year: {$year: "$stats.collectionRun.date"},
               month: {$month: "$stats.collectionRun.date"},
               day: {$dayOfYear: "$stats.collectionRun.date"},
               hour: {$hour: "$stats.collectionRun.date"}
             }, else: {
-              $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date('11/01/2015') ] }, then: {
+              $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date(lastQuarter) ] }, then: {
                 year: {$year: "$stats.collectionRun.date"},
                 month: {$month: "$stats.collectionRun.date"},
                 day: {$dayOfYear: "$stats.collectionRun.date"}
@@ -185,7 +192,7 @@ router.route('/games/:gameName/stats')
             }}
           },
           viewers: {$first: "$stats.viewers"},
-          channels: {$first: "$stats.viewers"},
+          channels: {$first: "$stats.channels"},
           date: {$first: "$stats.collectionRun.date"},
           run: {$first: "$stats.collectionRun.run"}
         }},
