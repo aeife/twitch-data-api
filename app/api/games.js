@@ -162,8 +162,8 @@ router.route('/games/:gameName/stats')
       CollectionRun.findOne({}).sort({_id: -1}).exec(cb);
     });
 
-    requests.push(function (cb) {
-      var currentDate = new Date();
+    requests.push(function (lastCollectionRun, cb) {
+      var currentDate = new Date(lastCollectionRun.date);
       var lastMonth = new Date(currentDate.getTime());
       lastMonth = lastMonth.setMonth(lastMonth.getMonth() - 1);
       var lastQuarter = new Date(currentDate.getTime());
@@ -209,10 +209,12 @@ router.route('/games/:gameName/stats')
           d: 1,
           h: 1
         }}
-      ]).exec(cb);
+      ]).exec(function (err, data) {
+        cb(err, [lastCollectionRun, data]);
+      });
     });
 
-    async.parallel(requests, function (err, result) {
+    async.waterfall(requests, function (err, result) {
       if (!result[1]) {
         return res.sendStatus(404);
       }
