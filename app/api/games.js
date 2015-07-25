@@ -159,7 +159,7 @@ router.route('/games/:gameName/stats')
     var requests = [];
 
     requests.push(function (cb) {
-      CollectionRun.findOne({}).sort({_id: -1}).exec(cb);
+      CollectionRun.findOne({}).sort({date: -1}).exec(cb);
     });
 
     requests.push(function (lastCollectionRun, cb) {
