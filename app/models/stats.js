@@ -10,7 +10,7 @@ var StatsSchema = new Schema({
   },
   collectionRun: {
       run: {
-        type: Number,
+        type: Schema.Types.ObjectId,
         ref: 'CollectionRun'
       },
       date: {
