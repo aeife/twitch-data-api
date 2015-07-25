@@ -98,13 +98,13 @@ router.route('/games/:gameName/stats')
             $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date(lastMonth) ] }, then: {
               year: {$year: "$stats.collectionRun.date"},
               month: {$month: "$stats.collectionRun.date"},
-              day: {$dayOfYear: "$stats.collectionRun.date"},
+              day: {$dayOfMonth: "$stats.collectionRun.date"},
               hour: {$hour: "$stats.collectionRun.date"}
             }, else: {
               $cond: { if: { $gt: [ "$stats.collectionRun.date", new Date(lastQuarter) ] }, then: {
                 year: {$year: "$stats.collectionRun.date"},
                 month: {$month: "$stats.collectionRun.date"},
-                day: {$dayOfYear: "$stats.collectionRun.date"}
+                day: {$dayOfMonth: "$stats.collectionRun.date"}
               }, else: {
                   year: {$year: "$stats.collectionRun.date"},
                   month: {$month: "$stats.collectionRun.date"}
