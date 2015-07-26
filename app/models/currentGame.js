@@ -27,7 +27,7 @@ var CurrentGameSchema = new Schema({
     },
     collectionRun: {
         run: {
-          type: Number,
+          type: Schema.Types.ObjectId,
           ref: 'CollectionRun'
         },
         date: {
