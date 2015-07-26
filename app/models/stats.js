@@ -8,6 +8,9 @@ var StatsSchema = new Schema({
   channels: {
       type: Number
   },
+  followers: {
+      type: Number
+  },
   collectionRun: {
       run: {
         type: Schema.Types.ObjectId,
