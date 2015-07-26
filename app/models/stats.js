@@ -20,6 +20,6 @@ var StatsSchema = new Schema({
 });
 
 module.exports = {
-  model: mongoose.model('Stats', StatsSchema, 'totalStats'),
+  model: mongoose.model('Stats', StatsSchema, 'generalstats'),
   schema: StatsSchema
 };

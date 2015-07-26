@@ -1,7 +1,7 @@
 var express = require('express');
 var Game = require('../models/game').model;
 var mongoose = require('mongoose');
-var LastRun = mongoose.model('Game', require('../models/game').schema, 'lastRun');
+var CurrentGame = require('../models/currentGame').model;
 var CollectionRun = require('../models/collectionRun').model;
 var router = express.Router();
 var _ = require('lodash');
@@ -30,14 +30,14 @@ router.route('/games')
     var requests = [];
 
     requests.push(function (cb) {
-      LastRun
+      CurrentGame
         .find(search)
         .count()
         .exec(cb);
     });
 
     requests.push(function (cb) {
-      LastRun
+      CurrentGame
         .find(search)
         .limit(options.limit)
         .skip(options.offset)

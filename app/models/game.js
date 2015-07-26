@@ -9,17 +9,14 @@ var GameSchema = new Schema({
         unique: true,
         index: true
     },
-    dateCreated: {
-      type: Date
-    },
-    dateModified: {
-      type: Date
-    },
     twitchGameId: {
       type: Number,
       required: true,
       unique: true,
       index: true
+    },
+    giantbombId: {
+      type: Number
     },
     stats: [StatsSchema]
 });
