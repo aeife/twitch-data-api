@@ -14,6 +14,9 @@ var ChannelSchema = new Schema({
     views: {
       type: Number
     },
+    logo: {
+      type: String
+    },
     twitchChannelId: {
       type: Number,
       required: true,

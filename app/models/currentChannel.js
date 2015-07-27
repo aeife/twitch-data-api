@@ -21,6 +21,9 @@ var CurrentChannelSchema = new Schema({
     views: {
       type: Number
     },
+    logo: {
+      type: String
+    },
     collectionRun: {
         run: {
           type: Schema.Types.ObjectId,
