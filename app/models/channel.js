@@ -17,8 +17,8 @@ var ChannelSchema = new Schema({
     logo: {
       type: String
     },
-    game: {
-      type: String
+    created: {
+      type: Date
     },
     twitchChannelId: {
       type: Number,

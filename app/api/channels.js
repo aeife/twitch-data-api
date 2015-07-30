@@ -111,7 +111,8 @@ router.route('/channels/:channelName/stats')
           },
           viewers: {$first: "$stats.viewers"},
           followers: {$first: "$stats.followers"},
-          date: {$first: "$stats.collectionRun.date"}
+          date: {$first: "$stats.collectionRun.date"},
+          game: {$first: "$stats.game"}
         }},
         {$project: {
           _id: 0,
@@ -121,6 +122,7 @@ router.route('/channels/:channelName/stats')
           h: "$_id.hour",
           v: "$viewers",
           f: "$followers",
+          g: "$game",
           dt: "$date"
         }},
         {$sort: {

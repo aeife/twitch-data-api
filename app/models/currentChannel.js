@@ -27,6 +27,9 @@ var CurrentChannelSchema = new Schema({
     game: {
       type: String
     },
+    created: {
+      type: Date
+    },
     collectionRun: {
         run: {
           type: Schema.Types.ObjectId,

@@ -11,6 +11,9 @@ var StatsSchema = new Schema({
   followers: {
       type: Number
   },
+  game: {
+    type: String
+  },
   collectionRun: {
       run: {
         type: Schema.Types.ObjectId,
