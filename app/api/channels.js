@@ -137,7 +137,7 @@ router.route('/channels/:channelName/stats')
     });
 
     async.waterfall(requests, function (err, result) {
-      if (!result[1]) {
+      if (!result[1].length) {
         return res.sendStatus(404);
       }
 
