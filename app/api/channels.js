@@ -109,10 +109,10 @@ router.route('/channels/:channelName/stats')
               }}
             }}
           },
-          viewers: {$first: "$stats.viewers"},
-          followers: {$first: "$stats.followers"},
-          date: {$first: "$stats.collectionRun.date"},
-          game: {$first: "$stats.game"}
+          viewers: {$max: "$stats.viewers"},
+          followers: {$max: "$stats.followers"},
+          date: {$max: "$stats.collectionRun.date"},
+          game: {$max: "$stats.game"}
         }},
         {$project: {
           _id: 0,

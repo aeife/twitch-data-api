@@ -111,9 +111,9 @@ router.route('/games/:gameName/stats')
               }}
             }}
           },
-          viewers: {$first: "$stats.viewers"},
-          channels: {$first: "$stats.channels"},
-          date: {$first: "$stats.collectionRun.date"}
+          viewers: {$max: "$stats.viewers"},
+          channels: {$max: "$stats.channels"},
+          date: {$max: "$stats.collectionRun.date"}
         }},
         {$project: {
           _id: 0,
