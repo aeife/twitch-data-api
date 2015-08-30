@@ -8,6 +8,10 @@ var ChannelSchema = new Schema({
         type: String,
         index: true
     },
+    displayName: {
+        type: String,
+        index: true
+    },
     language: {
       type: String
     },

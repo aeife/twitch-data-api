@@ -6,6 +6,10 @@ var CurrentChannelSchema = new Schema({
         type: String,
         index: true
     },
+    displayName: {
+        type: String,
+        index: true
+    },
     twitchChannelId: {
       type: Number,
       required: true,

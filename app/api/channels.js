@@ -24,7 +24,7 @@ router.route('/channels')
 
     var search= {};
     if (options.search) {
-      search.name = {$regex: options.search, $options: 'i'};
+      search.displayName = {$regex: options.search, $options: 'i'};
     }
 
     var requests = [];
@@ -61,7 +61,7 @@ router.route('/channels/:channelName')
       return res.sendStatus(404);
     }
 
-    Channel.findOne({name: req.params.channelName}, {stats: 0, __v: 0}).exec(function (err, result) {
+    Channel.findOne({name: new RegExp('^'+req.params.channelName+'$', "i")}, {stats: 0, __v: 0}).exec(function (err, result) {
       if (!result) {
         return res.sendStatus(404);
       }
@@ -89,7 +89,7 @@ router.route('/channels/:channelName/stats')
       var lastQuarter = new Date(currentDate.getTime());
       lastQuarter = lastQuarter.setMonth(lastQuarter.getMonth() -3);
       Channel.aggregate([
-        {$match: {name: req.params.channelName}},
+        {$match: {name: new RegExp('^'+req.params.channelName+'$', "i")}},
         {$unwind: '$stats'},
         {$group: {
           _id: {
