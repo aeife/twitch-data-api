@@ -39,8 +39,8 @@ router.route('/channels')
     requests.push(function (cb) {
       CurrentChannel
         .find(search)
-        .limit(options.limit)
-        .skip(options.offset)
+        .limit(parseInt(options.limit, 10))
+        .skip(parseInt(options.offset, 10))
         .sort(sort)
         .exec(cb);
     });

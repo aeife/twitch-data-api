@@ -39,8 +39,8 @@ router.route('/games')
     requests.push(function (cb) {
       CurrentGame
         .find(search)
-        .limit(options.limit)
-        .skip(options.offset)
+        .limit(parseInt(options.limit, 10))
+        .skip(parseInt(options.offset, 10))
         .sort(sort)
         .exec(cb);
     });
